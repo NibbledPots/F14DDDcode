@@ -8,7 +8,7 @@
   If you can, use the IRQ Serial connection instead.
 */
 #define DCSBIOS_DEFAULT_SERIAL
-
+#define ENABLE_PULLUPS
 #include "DcsBios.h"
 #include <Keypad.h>
 /* paste code snippets from the reference documentation here */
@@ -22,21 +22,22 @@ char keys[ROWS][COLS] = {
   {'R', 'T', 'Y', 'U', '0'},
   {'0', '0', 'I', 'O', 'P'},
 }; // I set each switch to a letter, '0' is a fill in, indicating to me where there is no switch
-byte rowPins[ROWS] = {18, 17, 16};
-byte colPins[COLS] = {20, 14, 12, 11, 10};
+byte rowPins[ROWS] = {A1, A2, 15};
+byte colPins[COLS] = {A3, 16, 9, 8, 7};
 // pins indicated by the KiCad schematic
 Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 void setup() {
   DcsBios::setup();
   keypad.addEventListener(keypadEvent); // add an event listener
   keypad.setHoldTime(100); //default is 1000ms
-  keypad.setDebounceTime(50);  //default is 50ms
-  
+ keypad.setDebounceTime(50);  //default is 50ms
+
 }
 
 void loop() {
-  DcsBios::loop();
+
   char key = keypad.getKey();
+
 }
 
 void keypadEvent(KeypadEvent KEY){
@@ -59,7 +60,7 @@ void keypadEvent(KeypadEvent KEY){
  switch (keypad.getState()){  // gives PRESSED, HOLD or RELEASED
  case RELEASED: 
    switch(KEY) { // Released KEYs or Neutral Rockers signal is sent
-  case 'Q': sendDcsBiosMessage("RIO_DDD_RADAR", "0"); break;
+    case 'Q': sendDcsBiosMessage("RIO_DDD_RADAR", "0"); break;
     case 'W': sendDcsBiosMessage("RIO_DDD_IR", "0"); break;
     case 'E': sendDcsBiosMessage("RIO_DDD_IFF", "0"); break;
     case 'R': sendDcsBiosMessage("RIO_RADAR_PSTT", "0"); break;
@@ -72,4 +73,4 @@ void keypadEvent(KeypadEvent KEY){
 
    }}
 
-}
+} 
